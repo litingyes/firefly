@@ -9,6 +9,7 @@ import {
   isModelEnabled,
   pruneAllowlist,
   pruneSceneConfig,
+  type ChatWebSearchSetting,
   type ModelSettings,
   type ProviderModelAllowlist,
 } from '@/lib/model-settings'
@@ -117,6 +118,7 @@ export function useModelSettings() {
           const prunedScenes = pruneSceneConfig(current.scenes, prunedAllowlist)
 
           return {
+            ...current,
             allowlist: prunedAllowlist,
             scenes: prunedScenes,
           }
@@ -161,6 +163,7 @@ export function useModelSettings() {
         }
 
         return {
+          ...current,
           allowlist: nextAllowlist,
           scenes: pruneSceneConfig(current.scenes, nextAllowlist),
         }
@@ -181,10 +184,21 @@ export function useModelSettings() {
       }
 
       return {
+        ...current,
         allowlist: nextAllowlist,
         scenes: pruneSceneConfig(current.scenes, nextAllowlist),
       }
     })
+  }, [])
+
+  const setChatWebSearch = useCallback((patch: Partial<ChatWebSearchSetting>) => {
+    setSettings((current) => ({
+      ...current,
+      chatWebSearch: {
+        ...current.chatWebSearch,
+        ...patch,
+      },
+    }))
   }, [])
 
   const setSceneModels = useCallback((sceneId: ModelSceneId, refs: ModelRef[]) => {
@@ -278,6 +292,8 @@ export function useModelSettings() {
     setProviderModelEnabled,
     setProviderModelsEnabled,
     setSceneModels,
+    setChatWebSearch,
     settings,
+    chatWebSearch: settings.chatWebSearch,
   }
 }

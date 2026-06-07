@@ -50,6 +50,9 @@ importers:
       '@firefly/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@firefly/web-search':
+        specifier: workspace:*
+        version: link:../../packages/web-search
       '@tauri-apps/api':
         specifier: ^2
         version: 2.11.0
@@ -120,6 +123,9 @@ importers:
       '@ai-sdk/openai':
         specifier: ^3.0.0
         version: 3.0.68(zod@3.25.76)
+      '@firefly/web-search':
+        specifier: workspace:*
+        version: link:../web-search
       '@openrouter/ai-sdk-provider':
         specifier: ^2.9.0
         version: 2.9.0(ai@6.0.197(zod@3.25.76))(zod@3.25.76)
@@ -269,6 +275,12 @@ importers:
       tsx:
         specifier: ^4.20.3
         version: 4.22.4
+
+  packages/web-search:
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 5.8.3
 
 packages:
 

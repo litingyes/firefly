@@ -14,7 +14,9 @@ export { listProviderModels } from './list-models.js'
 export {
   createFireflyChatTransport,
   type CreateFireflyChatTransportOptions,
+  type WebSearchRuntimeConfig,
 } from './create-firefly-chat-transport.js'
+export { createWebSearchTool, type CreateWebSearchToolOptions } from './web-search-tool.js'
 export { createProviderClient, getLanguageModel, resolveProviderBaseUrl } from './runtime.js'
 
 export function createDefaultProviderConfig(): import('./types.js').ProviderConfig {

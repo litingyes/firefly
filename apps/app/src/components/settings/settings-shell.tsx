@@ -14,15 +14,16 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from '@firefly/ui'
-import { ArrowLeftIcon, LayersIcon, SparklesIcon, WaypointsIcon } from 'lucide-react'
+import { ArrowLeftIcon, GlobeIcon, LayersIcon, SparklesIcon, WaypointsIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 
-export type SettingsPageId = 'providers' | 'scenes'
+export type SettingsPageId = 'providers' | 'web-search' | 'scenes'
 
 interface SettingsShellProps {
   activePage: SettingsPageId
   children: ReactNode
   connectedProviders: number
+  connectedWebSearchProviders: number
   enabledModels: number
   onBackToWorkspace: () => void
   onNavigate: (page: SettingsPageId) => void
@@ -30,6 +31,7 @@ interface SettingsShellProps {
 
 const PAGE_LABELS: Record<SettingsPageId, string> = {
   providers: 'Providers',
+  'web-search': 'Web search',
   scenes: 'Scenes',
 }
 
@@ -37,6 +39,7 @@ export function SettingsShell({
   activePage,
   children,
   connectedProviders,
+  connectedWebSearchProviders,
   enabledModels,
   onBackToWorkspace,
   onNavigate,
@@ -79,6 +82,17 @@ export function SettingsShell({
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton
+                    aria-current={activePage === 'web-search' ? 'page' : undefined}
+                    isActive={activePage === 'web-search'}
+                    onClick={() => onNavigate('web-search')}
+                    tooltip="Web search"
+                  >
+                    <GlobeIcon />
+                    <span>Web search</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
                     aria-current={activePage === 'scenes' ? 'page' : undefined}
                     isActive={activePage === 'scenes'}
                     onClick={() => onNavigate('scenes')}
@@ -98,6 +112,9 @@ export function SettingsShell({
             {connectedProviders === 0
               ? 'No providers connected'
               : `${connectedProviders} provider${connectedProviders === 1 ? '' : 's'} connected`}
+            {connectedWebSearchProviders > 0
+              ? ` · ${connectedWebSearchProviders} search provider${connectedWebSearchProviders === 1 ? '' : 's'} connected`
+              : ''}
             {enabledModels > 0
               ? ` · ${enabledModels} model${enabledModels === 1 ? '' : 's'} enabled`
               : ''}

@@ -1,19 +1,34 @@
 import type { ModelRef, ProviderId } from '@firefly/ai'
 import { modelRefKey } from '@firefly/ai'
+import type { WebSearchProviderId } from '@firefly/web-search'
 
 import { createDefaultModelSceneConfig, type ModelSceneConfig } from '@/lib/scenes'
 
 export type ProviderModelAllowlist = Partial<Record<ProviderId, string[]>>
 
+export interface ChatWebSearchSetting {
+  enabled: boolean
+  providerId: WebSearchProviderId | null
+}
+
 export interface ModelSettings {
   allowlist: ProviderModelAllowlist
   scenes: ModelSceneConfig
+  chatWebSearch: ChatWebSearchSetting
+}
+
+export function createDefaultChatWebSearchSetting(): ChatWebSearchSetting {
+  return {
+    enabled: false,
+    providerId: null,
+  }
 }
 
 export function createDefaultModelSettings(): ModelSettings {
   return {
     allowlist: {},
     scenes: createDefaultModelSceneConfig(),
+    chatWebSearch: createDefaultChatWebSearchSetting(),
   }
 }
 

@@ -5,28 +5,23 @@ import {
   ConversationContent,
   Message,
   MessageContent,
-  MessageResponse,
   Suggestion,
   Suggestions,
 } from '@firefly/ui'
-import { PlugZapIcon } from 'lucide-react'
+import { GlobeIcon, PlugZapIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 
+import { ChatMessageParts } from '@/components/chat/chat-message-parts'
 import { CompletionInput } from '@/components/workspace/completion-input'
 import { useModelSettingsContext } from '@/hooks/model-settings-context'
 import { useProviderConfigContext } from '@/hooks/provider-config-context'
 import { useFireflyChat } from '@/hooks/use-firefly-chat'
+import { useWebSearchConfigContext } from '@/hooks/web-search-config-context'
 import { CHAT_STARTER_SUGGESTIONS, listChatCompletionSuggestions } from '@/lib/chat-completions'
+import { getWebSearchProviderDefinition } from '@/lib/web-search'
 
 interface ChatWorkspaceProps {
   onOpenSettings: () => void
-}
-
-function getMessageText(message: { parts: Array<{ type: string; text?: string }> }): string {
-  return message.parts
-    .filter((part) => part.type === 'text')
-    .map((part) => part.text ?? '')
-    .join('')
 }
 
 function ChatAlerts({
@@ -85,7 +80,9 @@ export function ChatWorkspace({ onOpenSettings }: ChatWorkspaceProps) {
     getModelLabel,
     isLoading: isModelLoading,
     scenes,
+    chatWebSearch,
   } = useModelSettingsContext()
+  const { configMap: webSearchConfigMap } = useWebSearchConfigContext()
   const { messages, sendMessage, status, stop, error, regenerate, clearError } = useFireflyChat()
   const [input, setInput] = useState('')
 
@@ -95,6 +92,12 @@ export function ChatWorkspace({ onOpenSettings }: ChatWorkspaceProps) {
   const isHydrated = !isProviderLoading && !isModelLoading
   const isReady = isHydrated && hasProviders && hasChatModel && enabledModelRefs.length > 0
   const activeModelLabel = chatModels[0] ? getModelLabel(chatModels[0]) : null
+  const activeWebSearchProvider =
+    chatWebSearch.enabled &&
+    chatWebSearch.providerId &&
+    webSearchConfigMap[chatWebSearch.providerId]?.status === 'connected'
+      ? getWebSearchProviderDefinition(chatWebSearch.providerId)
+      : null
   const isBusy = status === 'submitted' || status === 'streaming'
   const hasMessages = messages.length > 0
 
@@ -209,11 +212,7 @@ export function ChatWorkspace({ onOpenSettings }: ChatWorkspaceProps) {
             {messages.map((message) => (
               <Message from={message.role} key={message.id}>
                 <MessageContent>
-                  {message.role === 'assistant' ? (
-                    <MessageResponse>{getMessageText(message)}</MessageResponse>
-                  ) : (
-                    <p className="whitespace-pre-wrap">{getMessageText(message)}</p>
-                  )}
+                  <ChatMessageParts message={message} />
                 </MessageContent>
               </Message>
             ))}
@@ -222,11 +221,19 @@ export function ChatWorkspace({ onOpenSettings }: ChatWorkspaceProps) {
 
         <div className="shrink-0 border-t px-4 py-4 sm:px-6">
           <div className="mx-auto w-full max-w-3xl">
-            {activeModelLabel ? (
-              <div className="mb-3">
-                <Badge className="font-normal" variant="secondary">
-                  Chat · {activeModelLabel}
-                </Badge>
+            {activeModelLabel || activeWebSearchProvider ? (
+              <div className="mb-3 flex flex-wrap gap-2">
+                {activeModelLabel ? (
+                  <Badge className="font-normal" variant="secondary">
+                    Chat · {activeModelLabel}
+                  </Badge>
+                ) : null}
+                {activeWebSearchProvider ? (
+                  <Badge className="gap-1 font-normal" variant="outline">
+                    <GlobeIcon className="size-3" />
+                    Web search · {activeWebSearchProvider.name}
+                  </Badge>
+                ) : null}
               </div>
             ) : null}
             {composer}
@@ -241,11 +248,19 @@ export function ChatWorkspace({ onOpenSettings }: ChatWorkspaceProps) {
       <div className="mx-auto w-full max-w-3xl space-y-6">
         <div className="space-y-2 text-center">
           <h2 className="font-medium text-base">Ask a question or pick a prompt</h2>
-          {activeModelLabel ? (
-            <Badge className="font-normal" variant="secondary">
-              Chat · {activeModelLabel}
-            </Badge>
-          ) : null}
+          <div className="flex flex-wrap justify-center gap-2">
+            {activeModelLabel ? (
+              <Badge className="font-normal" variant="secondary">
+                Chat · {activeModelLabel}
+              </Badge>
+            ) : null}
+            {activeWebSearchProvider ? (
+              <Badge className="gap-1 font-normal" variant="outline">
+                <GlobeIcon className="size-3" />
+                Web search · {activeWebSearchProvider.name}
+              </Badge>
+            ) : null}
+          </div>
         </div>
         {composer}
       </div>

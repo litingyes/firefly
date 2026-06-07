@@ -15,6 +15,7 @@ import {
 } from '@firefly/ui'
 import { ArrowDownIcon, ArrowUpIcon, LayersIcon, Trash2Icon, WaypointsIcon } from 'lucide-react'
 
+import { ChatWebSearchSection } from '@/components/scenes/chat-web-search-section'
 import { ModelRefPicker } from '@/components/scenes/model-ref-picker'
 import { useModelSettingsContext } from '@/hooks/model-settings-context'
 import { getProviderDefinition } from '@/lib/providers'
@@ -165,6 +166,8 @@ function SceneSection({ sceneId }: { sceneId: ModelSceneId }) {
       )}
 
       <ModelRefPicker exclude={assigned} onSelect={(ref) => addSceneModel(sceneId, ref)} />
+
+      {sceneId === 'chat' ? <ChatWebSearchSection /> : null}
     </section>
   )
 }

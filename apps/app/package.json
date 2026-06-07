@@ -13,6 +13,7 @@
     "@ai-sdk/react": "^3.0.199",
     "@firefly/ai": "workspace:*",
     "@firefly/ui": "workspace:*",
+    "@firefly/web-search": "workspace:*",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-http": "~2.5.9",
     "@tauri-apps/plugin-opener": "^2",
