@@ -1,0 +1,71 @@
+# Chat stream E2E with Ollama (local, no API keys in this file).
+#
+# Prerequisites:
+#   1. ollama serve && ollama pull llama3.2  (or any small model)
+#   2. pnpm tauri dev  (from apps/app)
+#   3. In app settings: enable Ollama at http://127.0.0.1:11434, test connection
+#   4. Assign that model to Chat scene
+#
+# Run (tauri-pilot with `run` subcommand):
+#   tauri-pilot ping
+#   tauri-pilot run apps/app/scenarios/chat-stream-ollama.toml
+#
+# Manual flow (older tauri-pilot without `run`):
+#   tauri-pilot click @e6   # starter suggestion, or use eval to set textarea value
+#   tauri-pilot click '[data-testid=chat-send]'
+#   tauri-pilot watch --selector '.is-assistant' --timeout 90000 --stable 2000
+#   tauri-pilot assert visible '.is-assistant'
+#   tauri-pilot logs --level error
+
+[scenario]
+name = "Chat stream with Ollama"
+fail_fast = true
+global_timeout_ms = 120000
+
+[[step]]
+name = "verify pilot connectivity"
+action = "ping"
+
+[[step]]
+name = "set chat prompt via textarea"
+action = "eval"
+script = """
+(() => {
+  const el = document.querySelector('[data-testid=chat-input]');
+  if (!el) throw new Error('Chat input not found');
+  const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+    window.HTMLTextAreaElement.prototype,
+    'value',
+  )?.set;
+  nativeInputValueSetter?.call(el, 'Say hello in one word.');
+  el.dispatchEvent(new Event('input', { bubbles: true }));
+})()
+"""
+
+[[step]]
+name = "send message"
+action = "click"
+target = "[data-testid=chat-send]"
+
+[[step]]
+name = "wait for assistant response"
+action = "watch"
+selector = ".is-assistant"
+timeout_ms = 90000
+stable = 2000
+
+[[step]]
+name = "assert assistant message exists"
+action = "assert-visible"
+target = ".is-assistant"
+
+[[step]]
+name = "assert assistant has non-empty text"
+action = "eval"
+script = """
+(() => {
+  const text = document.querySelector('.is-assistant')?.textContent?.trim() ?? '';
+  if (!text) throw new Error('Assistant message is empty');
+  return text.length;
+})()
+"""

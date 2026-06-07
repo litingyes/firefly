@@ -11,6 +11,10 @@ export { modelRefKey, parseModelRefKey } from './model-types.js'
 
 export { testProviderConnection } from './connection-test.js'
 export { listProviderModels } from './list-models.js'
+export {
+  createFireflyChatTransport,
+  type CreateFireflyChatTransportOptions,
+} from './create-firefly-chat-transport.js'
 export { createProviderClient, getLanguageModel, resolveProviderBaseUrl } from './runtime.js'
 
 export function createDefaultProviderConfig(): import('./types.js').ProviderConfig {

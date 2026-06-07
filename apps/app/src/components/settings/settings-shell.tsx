@@ -1,4 +1,5 @@
 import {
+  Button,
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -13,7 +14,7 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from '@firefly/ui'
-import { LayersIcon, SparklesIcon, WaypointsIcon } from 'lucide-react'
+import { ArrowLeftIcon, LayersIcon, SparklesIcon, WaypointsIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 export type SettingsPageId = 'providers' | 'scenes'
@@ -23,6 +24,7 @@ interface SettingsShellProps {
   children: ReactNode
   connectedProviders: number
   enabledModels: number
+  onBackToWorkspace: () => void
   onNavigate: (page: SettingsPageId) => void
 }
 
@@ -36,6 +38,7 @@ export function SettingsShell({
   children,
   connectedProviders,
   enabledModels,
+  onBackToWorkspace,
   onNavigate,
 }: SettingsShellProps) {
   return (
@@ -57,6 +60,12 @@ export function SettingsShell({
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
+                <SidebarMenuItem className="sm:hidden">
+                  <SidebarMenuButton onClick={onBackToWorkspace} tooltip="Back to chat">
+                    <ArrowLeftIcon />
+                    <span>Back to chat</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     aria-current={activePage === 'providers' ? 'page' : undefined}
@@ -101,6 +110,16 @@ export function SettingsShell({
       <SidebarInset>
         <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
+          <Button
+            className="hidden sm:inline-flex"
+            onClick={onBackToWorkspace}
+            size="sm"
+            type="button"
+            variant="ghost"
+          >
+            <ArrowLeftIcon className="size-4" />
+            Back to chat
+          </Button>
           <span className="text-muted-foreground text-sm">{PAGE_LABELS[activePage]}</span>
         </header>
         <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
