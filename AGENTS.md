@@ -45,9 +45,23 @@ Primary Tauri v2 desktop app for product development.
 # Install dependencies (repo root)
 pnpm install
 
-# Run the Tauri app in dev mode
+# Fast UI / frontend work (no Rust compile) — http://localhost:1520
+cd apps/app && pnpm dev
+
+# Full desktop app (store file, plugin-http, tauri-pilot)
 cd apps/app && pnpm tauri dev
 ```
+
+### Browser dev vs Tauri dev
+
+| Mode        | Command          | Persistence                                                            | HTTP                                                                      |
+| ----------- | ---------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Browser dev | `pnpm dev`       | `localStorage` key `firefly-settings.json` (same shape as Tauri store) | Native `fetch`; prefer AI Gateway or Ollama (some vendor APIs block CORS) |
+| Tauri dev   | `pnpm tauri dev` | `tauri-plugin-store` → `firefly-settings.json`                         | `tauri-plugin-http` (no CORS limits)                                      |
+
+Settings use the same keys in both modes (`provider-config`, `model-settings`). Legacy `localStorage` keys are migrated automatically on first load.
+
+`tauri-pilot` requires `pnpm tauri dev` (debug builds only).
 
 ## Testing with tauri-pilot
 
