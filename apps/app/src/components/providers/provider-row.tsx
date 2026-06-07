@@ -20,6 +20,7 @@ import { ChevronDownIcon, ExternalLinkIcon, PlugIcon, UnplugIcon } from 'lucide-
 import { useState } from 'react'
 
 import { ApiKeyInput } from '@/components/providers/api-key-input'
+import { ProviderModelsSection } from '@/components/providers/provider-models-section'
 import type { ProviderConfig } from '@/lib/providers'
 import { isProviderConfigured, type ProviderDefinition } from '@/lib/providers'
 
@@ -191,6 +192,8 @@ export function ProviderRow({
             })}
 
             {config.statusMessage ? <FieldError>{config.statusMessage}</FieldError> : null}
+
+            <ProviderModelsSection config={config} providerId={definition.id} />
 
             <Separator />
 

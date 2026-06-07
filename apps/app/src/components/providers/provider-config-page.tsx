@@ -144,8 +144,8 @@ export function ProviderConfigPage() {
             </EmptyMedia>
             <EmptyTitle>Connect your first provider</EmptyTitle>
             <EmptyDescription>
-              Enable a vendor, paste an API key, then run a connection test. You need at least one
-              connected provider before models appear in chat.
+              Enable a vendor, paste an API key, then run a connection test. Load models and enable
+              the ones you want before assigning them on the Scenes page.
             </EmptyDescription>
           </EmptyHeader>
         </Empty>

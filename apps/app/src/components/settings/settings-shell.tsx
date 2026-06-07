@@ -13,15 +13,31 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from '@firefly/ui'
-import { SparklesIcon, WaypointsIcon } from 'lucide-react'
+import { LayersIcon, SparklesIcon, WaypointsIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 
+export type SettingsPageId = 'providers' | 'scenes'
+
 interface SettingsShellProps {
+  activePage: SettingsPageId
   children: ReactNode
   connectedProviders: number
+  enabledModels: number
+  onNavigate: (page: SettingsPageId) => void
 }
 
-export function SettingsShell({ children, connectedProviders }: SettingsShellProps) {
+const PAGE_LABELS: Record<SettingsPageId, string> = {
+  providers: 'Providers',
+  scenes: 'Scenes',
+}
+
+export function SettingsShell({
+  activePage,
+  children,
+  connectedProviders,
+  enabledModels,
+  onNavigate,
+}: SettingsShellProps) {
   return (
     <SidebarProvider defaultOpen>
       <Sidebar collapsible="icon" variant="inset">
@@ -42,9 +58,25 @@ export function SettingsShell({ children, connectedProviders }: SettingsShellPro
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
-                  <SidebarMenuButton aria-current="page" isActive tooltip="Providers">
+                  <SidebarMenuButton
+                    aria-current={activePage === 'providers' ? 'page' : undefined}
+                    isActive={activePage === 'providers'}
+                    onClick={() => onNavigate('providers')}
+                    tooltip="Providers"
+                  >
                     <WaypointsIcon />
                     <span>Providers</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    aria-current={activePage === 'scenes' ? 'page' : undefined}
+                    isActive={activePage === 'scenes'}
+                    onClick={() => onNavigate('scenes')}
+                    tooltip="Scenes"
+                  >
+                    <LayersIcon />
+                    <span>Scenes</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
@@ -57,6 +89,9 @@ export function SettingsShell({ children, connectedProviders }: SettingsShellPro
             {connectedProviders === 0
               ? 'No providers connected'
               : `${connectedProviders} provider${connectedProviders === 1 ? '' : 's'} connected`}
+            {enabledModels > 0
+              ? ` · ${enabledModels} model${enabledModels === 1 ? '' : 's'} enabled`
+              : ''}
           </p>
         </SidebarFooter>
 
@@ -66,7 +101,7 @@ export function SettingsShell({ children, connectedProviders }: SettingsShellPro
       <SidebarInset>
         <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
-          <span className="text-muted-foreground text-sm">Providers</span>
+          <span className="text-muted-foreground text-sm">{PAGE_LABELS[activePage]}</span>
         </header>
         <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
       </SidebarInset>
