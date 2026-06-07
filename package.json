@@ -5,6 +5,10 @@
   "license": "ISC",
   "author": "",
   "type": "module",
+  "scripts": {
+    "ui-docs:dev": "pnpm --filter @firefly/ui-docs dev",
+    "ui-docs:build": "pnpm --filter @firefly/ui-docs build"
+  },
   "devDependencies": {
     "typescript": "catalog:",
     "vite-plus": "^0.1.24"

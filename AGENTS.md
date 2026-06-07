@@ -77,6 +77,15 @@ Primary Tauri v2 desktop app for product development.
 - Depends on `@firefly/ui`
 - **Debug builds** include `tauri-plugin-pilot` for automated testing (see below)
 
+### `apps/ui-docs` (`@firefly/ui-docs`)
+
+Component documentation site for `@firefly/ui`: browse UI primitives and AI elements, inspect design tokens on a dedicated Theme page, and verify interactions in the browser.
+
+- Frontend: React 19 + Vite + Tailwind CSS 4 + react-router-dom
+- Dev server: `pnpm ui-docs:dev` → http://localhost:1522
+- Build: `pnpm ui-docs:build` (static output in `dist/`, deployable to Vercel)
+- Depends on `@firefly/ui` only (no Tauri)
+
 ## Development
 
 ```bash
@@ -85,6 +94,9 @@ pnpm install
 
 # Fast UI / frontend work (no Rust compile) — http://localhost:1520
 cd apps/app && pnpm dev
+
+# UI component docs site — http://localhost:1522
+pnpm ui-docs:dev
 
 # Full desktop app (store file, plugin-http, tauri-pilot)
 cd apps/app && pnpm tauri dev
