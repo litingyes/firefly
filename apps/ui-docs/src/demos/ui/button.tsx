@@ -1,4 +1,5 @@
 import { Button } from '@firefly/ui/components/ui/button'
+import { Spinner } from '@firefly/ui/components/ui/spinner'
 
 import { DemoSection } from '@/components/demo-section'
 
@@ -41,10 +42,19 @@ export function ButtonDemo() {
         </div>
       </DemoSection>
 
-      <DemoSection title="Disabled">
-        <Button disabled type="button">
-          Disabled
-        </Button>
+      <DemoSection description="Pending actions and icon-only controls." title="States">
+        <div className="flex flex-wrap items-center gap-2">
+          <Button disabled type="button">
+            Disabled
+          </Button>
+          <Button disabled type="button">
+            <Spinner className="size-4" />
+            Saving
+          </Button>
+          <Button aria-label="Add item" size="icon" type="button" variant="outline">
+            +
+          </Button>
+        </div>
       </DemoSection>
     </div>
   )

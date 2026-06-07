@@ -27,6 +27,7 @@ export function ThemeToggle() {
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
       size="icon"
       type="button"
+      className="hover:text-primary"
       variant="ghost"
     >
       {isDark ? <SunIcon className="size-4" /> : <MoonIcon className="size-4" />}

@@ -15,6 +15,7 @@ export const CORE_COLOR_TOKENS: ColorToken[] = [
   { name: 'accent', cssVar: '--accent' },
   { name: 'accent-foreground', cssVar: '--accent-foreground' },
   { name: 'destructive', cssVar: '--destructive' },
+  { name: 'destructive-foreground', cssVar: '--destructive-foreground' },
   { name: 'border', cssVar: '--border' },
   { name: 'input', cssVar: '--input' },
   { name: 'ring', cssVar: '--ring' },
@@ -52,6 +53,63 @@ export const RADIUS_TOKENS = [
   { name: 'radius-lg', cssVar: '--radius-lg' },
   { name: 'radius-xl', cssVar: '--radius-xl' },
 ] as const
+
+const SURFACE_FOREGROUND: Record<string, string> = {
+  background: '--foreground',
+  primary: '--primary-foreground',
+  secondary: '--secondary-foreground',
+  muted: '--muted-foreground',
+  accent: '--accent-foreground',
+  destructive: '--destructive-foreground',
+  card: '--card-foreground',
+  popover: '--popover-foreground',
+  sidebar: '--sidebar-foreground',
+  'sidebar-primary': '--sidebar-primary-foreground',
+  'sidebar-accent': '--sidebar-accent-foreground',
+}
+
+const SKIP_CONTRAST = new Set(['border', 'input', 'ring', 'sidebar-border', 'sidebar-ring'])
+
+export type TokenContrastPair = {
+  foregroundVar: string
+  backgroundVar: string
+}
+
+function tokenCssVar(tokenName: string): string {
+  return `--${tokenName}`
+}
+
+export function getTokenContrastPair(tokenName: string): TokenContrastPair | null {
+  if (SKIP_CONTRAST.has(tokenName)) return null
+
+  if (tokenName === 'foreground') {
+    return { foregroundVar: '--foreground', backgroundVar: '--background' }
+  }
+
+  if (tokenName.endsWith('-foreground')) {
+    const surfaceName = tokenName.slice(0, -'-foreground'.length)
+    return {
+      foregroundVar: tokenCssVar(tokenName),
+      backgroundVar: tokenCssVar(surfaceName),
+    }
+  }
+
+  const foregroundVar = SURFACE_FOREGROUND[tokenName]
+  if (foregroundVar) {
+    return { foregroundVar, backgroundVar: tokenCssVar(tokenName) }
+  }
+
+  if (tokenName.startsWith('chart-')) {
+    return { foregroundVar: '--foreground', backgroundVar: tokenCssVar(tokenName) }
+  }
+
+  return null
+}
+
+/** @deprecated Use getTokenContrastPair for contrast checks. */
+export function getPairedForegroundVar(tokenName: string): string | null {
+  return getTokenContrastPair(tokenName)?.foregroundVar ?? null
+}
 
 function parseOklch(
   l: number,

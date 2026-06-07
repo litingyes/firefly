@@ -1,34 +1,25 @@
 import { useEffect, useState } from 'react'
 
 import { TokenSwatch } from '@/components/token-swatch'
+import { useRotatingMessage } from '@/hooks/use-rotating-message'
+import { docsType } from '@/lib/docs-type'
 import {
-  CHART_COLOR_TOKENS,
-  CORE_COLOR_TOKENS,
-  getContrastRatio,
-  getCssVarValue,
-  RADIUS_TOKENS,
-  SIDEBAR_COLOR_TOKENS,
-  SURFACE_COLOR_TOKENS,
-  type ColorToken,
-} from '@/lib/theme-tokens'
+  mountThemePreview,
+  type ResolvedThemeTokens,
+  type ResolvedToken,
+} from '@/lib/theme-preview'
 
-type ResolvedToken = {
-  name: string
-  value: string
-  contrastRatio: number | null
-}
+const LIGHT_LOADING_MESSAGES = [
+  'Reading OKLCH values from @firefly/ui/index.css…',
+  'Mounting isolated light preview…',
+  'Computing contrast ratios…',
+] as const
 
-function readTokens(element: Element, tokens: ColorToken[]): ResolvedToken[] {
-  const foreground = getCssVarValue(element, '--foreground')
-
-  return tokens.map((token) => {
-    const value = getCssVarValue(element, token.cssVar)
-    const contrastRatio =
-      token.name.includes('foreground') || !value ? null : getContrastRatio(foreground, value)
-
-    return { name: token.name, value, contrastRatio }
-  })
-}
+const DARK_LOADING_MESSAGES = [
+  'Reading OKLCH values from @firefly/ui/index.css…',
+  'Mounting isolated dark preview…',
+  'Resolving sidebar and chart tokens…',
+] as const
 
 function TokenGrid({ tokens }: { tokens: ResolvedToken[] }) {
   return (
@@ -38,6 +29,8 @@ function TokenGrid({ tokens }: { tokens: ResolvedToken[] }) {
           key={token.name}
           contrastRatio={token.contrastRatio}
           name={token.name}
+          swatchBackground={token.swatchBackground || token.value || '—'}
+          swatchForeground={token.swatchForeground}
           value={token.value || '—'}
         />
       ))}
@@ -46,63 +39,67 @@ function TokenGrid({ tokens }: { tokens: ResolvedToken[] }) {
 }
 
 function ThemeColumn({ label, mode }: { label: string; mode: 'light' | 'dark' }) {
-  const [tokens, setTokens] = useState<{
-    core: ResolvedToken[]
-    surface: ResolvedToken[]
-    sidebar: ResolvedToken[]
-    charts: ResolvedToken[]
-    radius: { name: string; value: string }[]
-  } | null>(null)
+  const [tokens, setTokens] = useState<ResolvedThemeTokens | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const loadingMessage = useRotatingMessage(
+    mode === 'light' ? LIGHT_LOADING_MESSAGES : DARK_LOADING_MESSAGES,
+  )
 
   useEffect(() => {
-    const frame = document.createElement('div')
-    frame.className = mode === 'dark' ? 'dark' : ''
-    frame.style.position = 'fixed'
-    frame.style.left = '-9999px'
-    frame.style.top = '0'
-    frame.style.width = '1px'
-    frame.style.height = '1px'
-    document.body.appendChild(frame)
+    setError(null)
+    setTokens(null)
 
-    setTokens({
-      core: readTokens(frame, CORE_COLOR_TOKENS),
-      surface: readTokens(frame, SURFACE_COLOR_TOKENS),
-      sidebar: readTokens(frame, SIDEBAR_COLOR_TOKENS),
-      charts: readTokens(frame, CHART_COLOR_TOKENS),
-      radius: RADIUS_TOKENS.map((token) => ({
-        name: token.name,
-        value: getCssVarValue(frame, token.cssVar),
-      })),
+    let cancelled = false
+    let loaded = false
+    let timeoutId = 0
+
+    const cleanup = mountThemePreview(mode, (resolved) => {
+      if (cancelled) return
+      loaded = true
+      window.clearTimeout(timeoutId)
+      setTokens(resolved)
     })
 
+    timeoutId = window.setTimeout(() => {
+      if (cancelled || loaded) return
+      setError('Token preview timed out. Refresh the page to try again.')
+    }, 5000)
+
     return () => {
-      document.body.removeChild(frame)
+      cancelled = true
+      window.clearTimeout(timeoutId)
+      cleanup()
     }
   }, [mode])
 
   return (
     <div className="space-y-8">
-      <h2 className="font-medium text-lg">{label}</h2>
+      <h2 className={docsType.columnTitle}>{label}</h2>
+      {error ? (
+        <p className={`${docsType.body} text-destructive`} role="alert">
+          {error}
+        </p>
+      ) : null}
       {tokens ? (
         <>
           <section className="space-y-3">
-            <h3 className="font-medium text-sm">Core</h3>
+            <h3 className={docsType.sectionTitle}>Core</h3>
             <TokenGrid tokens={tokens.core} />
           </section>
           <section className="space-y-3">
-            <h3 className="font-medium text-sm">Surface</h3>
+            <h3 className={docsType.sectionTitle}>Surface</h3>
             <TokenGrid tokens={tokens.surface} />
           </section>
           <section className="space-y-3">
-            <h3 className="font-medium text-sm">Sidebar</h3>
+            <h3 className={docsType.sectionTitle}>Sidebar</h3>
             <TokenGrid tokens={tokens.sidebar} />
           </section>
           <section className="space-y-3">
-            <h3 className="font-medium text-sm">Charts</h3>
+            <h3 className={docsType.sectionTitle}>Charts</h3>
             <TokenGrid tokens={tokens.charts} />
           </section>
           <section className="space-y-3">
-            <h3 className="font-medium text-sm">Radius</h3>
+            <h3 className={docsType.sectionTitle}>Radius</h3>
             <div className="grid gap-3 sm:grid-cols-2">
               {tokens.radius.map((token) => (
                 <div
@@ -114,16 +111,18 @@ function ThemeColumn({ label, mode }: { label: string; mode: 'light' | 'dark' })
                     style={{ borderRadius: token.value }}
                   />
                   <div>
-                    <p className="font-mono text-xs">{token.name}</p>
-                    <p className="text-muted-foreground text-xs">{token.value}</p>
+                    <p className={docsType.tableName}>{token.name}</p>
+                    <p className={`${docsType.meta} text-muted-foreground`}>{token.value}</p>
                   </div>
                 </div>
               ))}
             </div>
           </section>
         </>
-      ) : (
-        <p className="text-muted-foreground text-sm">Loading tokens...</p>
+      ) : error ? null : (
+        <p className={`${docsType.meta} docs-token-loading text-muted-foreground`}>
+          {loadingMessage}
+        </p>
       )}
     </div>
   )
@@ -131,23 +130,29 @@ function ThemeColumn({ label, mode }: { label: string; mode: 'light' | 'dark' })
 
 export function ThemePage() {
   return (
-    <div className="space-y-10">
+    <div className="mx-auto max-w-6xl space-y-10">
       <header className="space-y-2">
-        <h1 className="font-semibold text-2xl tracking-tight">Theme</h1>
-        <p className="max-w-2xl text-muted-foreground text-sm leading-relaxed">
-          Design tokens from <code className="font-mono text-xs">@firefly/ui/index.css</code>.
-          Values are read at runtime so this page stays in sync with the package. Use the header
-          toggle to preview components in light or dark mode.
+        <h1 className={docsType.pageTitle}>Theme</h1>
+        <p className={`${docsType.lead} text-muted-foreground`}>
+          Design tokens from <code className={docsType.inlineCode}>@firefly/ui/index.css</code>.
+          Light and dark columns read from isolated previews, so ratios stay accurate no matter
+          which mode the site is in. Contrast labels show paired text on each surface (4.5:1 AA).
         </p>
       </header>
 
       <section className="space-y-3">
-        <h2 className="font-medium text-sm">Typography</h2>
+        <h2 className={docsType.sectionTitle}>Typography</h2>
         <div className="space-y-4 rounded-lg border border-border p-6">
-          <p className="font-semibold text-2xl">Geist Variable</p>
-          <p className="text-base">Body text for settings, chat, and documentation.</p>
-          <p className="text-muted-foreground text-sm">Muted supporting copy and metadata.</p>
-          <p className="font-mono text-sm">
+          <p className={docsType.pageTitle}>Geist Variable</p>
+          <p className={docsType.body}>
+            Body text for settings, chat, and documentation.{' '}
+            <span className="font-medium text-primary">Primary accent</span> marks actions and
+            focus.
+          </p>
+          <p className={`${docsType.meta} text-muted-foreground`}>
+            Muted supporting copy and metadata.
+          </p>
+          <p className={docsType.codeBlock}>
             import {'{'} Button {'}'} from &apos;@firefly/ui/...&apos;
           </p>
         </div>

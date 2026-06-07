@@ -3,13 +3,13 @@
 @source './';
 
 :root {
-  --firefly-glow: oklch(0.68 0.14 72);
-  --firefly-glow-subtle: oklch(0.68 0.14 72 / 0.14);
+  --firefly-glow: oklch(0.51 0.165 192);
+  --firefly-glow-subtle: oklch(0.51 0.165 192 / 0.14);
 }
 
 .dark {
-  --firefly-glow: oklch(0.8 0.11 78);
-  --firefly-glow-subtle: oklch(0.8 0.11 78 / 0.16);
+  --firefly-glow: oklch(0.76 0.16 192);
+  --firefly-glow-subtle: oklch(0.76 0.16 192 / 0.16);
 }
 
 html,
