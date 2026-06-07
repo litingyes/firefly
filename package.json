@@ -1,0 +1,13 @@
+{
+  "name": "firefly",
+  "version": "0.0.0",
+  "description": "Pure AI. Every scene, a glow.",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "devDependencies": {
+    "typescript": "catalog:",
+    "vite-plus": "^0.1.24"
+  },
+  "packageManager": "pnpm@11.5.2"
+}

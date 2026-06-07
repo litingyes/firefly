@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "tauri-pilot": {
+      "source": "mpiton/tauri-pilot",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "04fbbb85758d54206fc1256dc59b1c615128da32b0b522a706dee15992910613"
+    }
+  }
+}
