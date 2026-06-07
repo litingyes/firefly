@@ -9,11 +9,11 @@
     "#hooks/*": "./src/hooks/*.ts"
   },
   "exports": {
-    ".": "./src/index.ts",
+    "./components/ui/*": "./src/components/ui/*.tsx",
+    "./components/ai-elements/*": "./src/components/ai-elements/*.tsx",
+    "./lib/*": "./src/lib/*.ts",
+    "./hooks/*": "./src/hooks/*.ts",
     "./index.css": "./src/index.css"
-  },
-  "scripts": {
-    "generate:exports": "tsx scripts/generate-exports.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",

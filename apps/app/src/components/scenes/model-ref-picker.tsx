@@ -1,13 +1,13 @@
-import type { ModelRef } from '@firefly/ai'
-import { modelRefKey } from '@firefly/ai'
+import type { ModelRef } from '@firefly/ai/model-types'
+import { modelRefKey } from '@firefly/ai/model-types'
+import { ModelSelectorLogo } from '@firefly/ui/components/ai-elements/model-selector'
 import {
-  ModelSelectorLogo,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@firefly/ui'
+} from '@firefly/ui/components/ui/select'
 import { useState } from 'react'
 
 import { useModelSettingsContext } from '@/hooks/model-settings-context'

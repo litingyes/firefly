@@ -1,5 +1,5 @@
+import { Button } from '@firefly/ui/components/ui/button'
 import {
-  Button,
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -13,7 +13,7 @@ import {
   SidebarProvider,
   SidebarRail,
   SidebarTrigger,
-} from '@firefly/ui'
+} from '@firefly/ui/components/ui/sidebar'
 import { ArrowLeftIcon, GlobeIcon, LayersIcon, SparklesIcon, WaypointsIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 

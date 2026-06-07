@@ -1,4 +1,4 @@
-import type { WebSearchConfigMap, WebSearchProviderId } from '@firefly/web-search'
+import type { WebSearchConfigMap, WebSearchProviderId } from '@firefly/web-search/types'
 import {
   convertToModelMessages,
   stepCountIs,

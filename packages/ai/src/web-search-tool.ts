@@ -1,9 +1,9 @@
-import {
-  webSearch,
-  type WebSearchConfigMap,
-  type WebSearchOutput,
-  type WebSearchProviderId,
-} from '@firefly/web-search'
+import { webSearch } from '@firefly/web-search/search'
+import type {
+  WebSearchConfigMap,
+  WebSearchOutput,
+  WebSearchProviderId,
+} from '@firefly/web-search/types'
 import { jsonSchema, tool } from 'ai'
 
 type FetchFn = typeof globalThis.fetch

@@ -1,4 +1,4 @@
-import { MessageResponse } from '@firefly/ui'
+import { MessageResponse } from '@firefly/ui/components/ai-elements/message'
 import type { UIMessage } from 'ai'
 import { isToolUIPart } from 'ai'
 import type { ReactNode } from 'react'

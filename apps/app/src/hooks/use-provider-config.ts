@@ -1,5 +1,5 @@
-import { createDefaultProviderConfigMap } from '@firefly/ai'
-import { testProviderConnection } from '@firefly/ai'
+import { testProviderConnection } from '@firefly/ai/connection-test'
+import { createDefaultProviderConfigMap } from '@firefly/ai/defaults'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 

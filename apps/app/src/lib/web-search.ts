@@ -1,13 +1,13 @@
+import {
+  createDefaultWebSearchProviderConfig,
+  createDefaultWebSearchConfigMap,
+} from '@firefly/web-search/defaults'
 import type {
   ConnectionStatus,
   WebSearchProviderConfig,
   WebSearchProviderId,
   WebSearchConfigMap,
-} from '@firefly/web-search'
-import {
-  createDefaultWebSearchProviderConfig,
-  createDefaultWebSearchConfigMap,
-} from '@firefly/web-search'
+} from '@firefly/web-search/types'
 
 export type { ConnectionStatus, WebSearchProviderConfig, WebSearchConfigMap, WebSearchProviderId }
 export { createDefaultWebSearchProviderConfig, createDefaultWebSearchConfigMap }

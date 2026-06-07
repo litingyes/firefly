@@ -1,4 +1,4 @@
-import { Button } from '@firefly/ui'
+import { Button } from '@firefly/ui/components/ui/button'
 import { MoonIcon, SunIcon } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'

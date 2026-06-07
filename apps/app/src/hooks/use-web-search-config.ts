@@ -1,4 +1,5 @@
-import { createDefaultWebSearchConfigMap, testWebSearchConnection } from '@firefly/web-search'
+import { testWebSearchConnection } from '@firefly/web-search/connection-test'
+import { createDefaultWebSearchConfigMap } from '@firefly/web-search/defaults'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 

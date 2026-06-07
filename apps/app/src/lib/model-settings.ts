@@ -1,6 +1,7 @@
-import type { ModelRef, ProviderId } from '@firefly/ai'
-import { modelRefKey } from '@firefly/ai'
-import type { WebSearchProviderId } from '@firefly/web-search'
+import type { ModelRef } from '@firefly/ai/model-types'
+import { modelRefKey } from '@firefly/ai/model-types'
+import type { ProviderId } from '@firefly/ai/types'
+import type { WebSearchProviderId } from '@firefly/web-search/types'
 
 import { createDefaultModelSceneConfig, type ModelSceneConfig } from '@/lib/scenes'
 

@@ -1,16 +1,16 @@
-import type { ProviderId } from '@firefly/ai'
+import type { ProviderId } from '@firefly/ai/types'
+import { Badge } from '@firefly/ui/components/ui/badge'
+import { Button } from '@firefly/ui/components/ui/button'
+import { Checkbox } from '@firefly/ui/components/ui/checkbox'
 import {
-  Badge,
-  Button,
-  Checkbox,
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-  Input,
-  Spinner,
-} from '@firefly/ui'
+} from '@firefly/ui/components/ui/empty'
+import { Input } from '@firefly/ui/components/ui/input'
+import { Spinner } from '@firefly/ui/components/ui/spinner'
 import { BoxesIcon, RefreshCwIcon, SearchIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'

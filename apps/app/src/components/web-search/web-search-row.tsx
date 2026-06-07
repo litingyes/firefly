@@ -1,22 +1,23 @@
+import { Badge } from '@firefly/ui/components/ui/badge'
+import { Button } from '@firefly/ui/components/ui/button'
 import {
-  Badge,
-  Button,
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+} from '@firefly/ui/components/ui/collapsible'
+import {
   Field,
   FieldContent,
   FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
-  Input,
-  NativeSelect,
-  NativeSelectOption,
-  Separator,
-  Spinner,
-  Switch,
-} from '@firefly/ui'
+} from '@firefly/ui/components/ui/field'
+import { Input } from '@firefly/ui/components/ui/input'
+import { NativeSelect, NativeSelectOption } from '@firefly/ui/components/ui/native-select'
+import { Separator } from '@firefly/ui/components/ui/separator'
+import { Spinner } from '@firefly/ui/components/ui/spinner'
+import { Switch } from '@firefly/ui/components/ui/switch'
 import { ChevronDownIcon, ExternalLinkIcon, PlugIcon, UnplugIcon } from 'lucide-react'
 import { useState } from 'react'
 

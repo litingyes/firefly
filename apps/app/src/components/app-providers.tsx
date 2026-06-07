@@ -1,4 +1,4 @@
-import { Toaster } from '@firefly/ui'
+import { Toaster } from '@firefly/ui/components/ui/sonner'
 import { ThemeProvider } from 'next-themes'
 import type { ReactNode } from 'react'
 

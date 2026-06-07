@@ -1,5 +1,7 @@
-import type { ModelInfo, ModelRef, ProviderId } from '@firefly/ai'
-import { listProviderModels, modelRefKey } from '@firefly/ai'
+import { listProviderModels } from '@firefly/ai/list-models'
+import type { ModelInfo, ModelRef } from '@firefly/ai/model-types'
+import { modelRefKey } from '@firefly/ai/model-types'
+import type { ProviderId } from '@firefly/ai/types'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 

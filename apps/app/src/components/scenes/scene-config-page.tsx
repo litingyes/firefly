@@ -1,18 +1,18 @@
-import type { ModelRef } from '@firefly/ai'
-import { modelRefKey } from '@firefly/ai'
+import type { ModelRef } from '@firefly/ai/model-types'
+import { modelRefKey } from '@firefly/ai/model-types'
+import { ModelSelectorLogo } from '@firefly/ui/components/ai-elements/model-selector'
+import { Badge } from '@firefly/ui/components/ui/badge'
+import { Button } from '@firefly/ui/components/ui/button'
 import {
-  Badge,
-  Button,
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-  ModelSelectorLogo,
-  Separator,
-  Skeleton,
-  Spinner,
-} from '@firefly/ui'
+} from '@firefly/ui/components/ui/empty'
+import { Separator } from '@firefly/ui/components/ui/separator'
+import { Skeleton } from '@firefly/ui/components/ui/skeleton'
+import { Spinner } from '@firefly/ui/components/ui/spinner'
 import { ArrowDownIcon, ArrowUpIcon, LayersIcon, Trash2Icon, WaypointsIcon } from 'lucide-react'
 
 import { ChatWebSearchSection } from '@/components/scenes/chat-web-search-section'

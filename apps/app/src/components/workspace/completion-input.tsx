@@ -1,4 +1,10 @@
-import { Button, InputGroup, InputGroupAddon, InputGroupTextarea, Kbd } from '@firefly/ui'
+import { Button } from '@firefly/ui/components/ui/button'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupTextarea,
+} from '@firefly/ui/components/ui/input-group'
+import { Kbd } from '@firefly/ui/components/ui/kbd'
 import { CornerDownLeftIcon, SquareIcon } from 'lucide-react'
 import type { FormEvent, KeyboardEvent } from 'react'
 import { useCallback, useId, useLayoutEffect, useRef } from 'react'

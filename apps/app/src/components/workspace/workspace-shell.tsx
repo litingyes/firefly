@@ -1,4 +1,5 @@
-import { Badge, Button } from '@firefly/ui'
+import { Badge } from '@firefly/ui/components/ui/badge'
+import { Button } from '@firefly/ui/components/ui/button'
 import { SettingsIcon, SparklesIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 

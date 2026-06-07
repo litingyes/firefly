@@ -1,13 +1,8 @@
-import {
-  Badge,
-  Button,
-  Conversation,
-  ConversationContent,
-  Message,
-  MessageContent,
-  Suggestion,
-  Suggestions,
-} from '@firefly/ui'
+import { Conversation, ConversationContent } from '@firefly/ui/components/ai-elements/conversation'
+import { Message, MessageContent } from '@firefly/ui/components/ai-elements/message'
+import { Suggestion, Suggestions } from '@firefly/ui/components/ai-elements/suggestion'
+import { Badge } from '@firefly/ui/components/ui/badge'
+import { Button } from '@firefly/ui/components/ui/button'
 import { GlobeIcon, PlugZapIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 

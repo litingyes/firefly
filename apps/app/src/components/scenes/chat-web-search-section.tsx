@@ -1,13 +1,7 @@
-import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldLabel,
-  NativeSelect,
-  NativeSelectOption,
-  Switch,
-} from '@firefly/ui'
-import type { WebSearchProviderId } from '@firefly/web-search'
+import { Field, FieldContent, FieldDescription, FieldLabel } from '@firefly/ui/components/ui/field'
+import { NativeSelect, NativeSelectOption } from '@firefly/ui/components/ui/native-select'
+import { Switch } from '@firefly/ui/components/ui/switch'
+import type { WebSearchProviderId } from '@firefly/web-search/types'
 import { GlobeIcon } from 'lucide-react'
 
 import { WebSearchProviderLogo } from '@/components/web-search/web-search-provider-logo'

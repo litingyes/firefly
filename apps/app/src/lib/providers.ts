@@ -1,6 +1,11 @@
-import type { ConnectionStatus, ProviderConfig, ProviderConfigMap, ProviderId } from '@firefly/ai'
-import { createDefaultProviderConfig, createDefaultProviderConfigMap } from '@firefly/ai'
-import type { ModelSelectorLogoProps } from '@firefly/ui'
+import { createDefaultProviderConfig, createDefaultProviderConfigMap } from '@firefly/ai/defaults'
+import type {
+  ConnectionStatus,
+  ProviderConfig,
+  ProviderConfigMap,
+  ProviderId,
+} from '@firefly/ai/types'
+import type { ModelSelectorLogoProps } from '@firefly/ui/components/ai-elements/model-selector'
 
 export type { ConnectionStatus, ProviderConfig, ProviderConfigMap, ProviderId }
 export { createDefaultProviderConfig, createDefaultProviderConfigMap }

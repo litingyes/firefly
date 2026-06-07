@@ -1,4 +1,4 @@
-import { cn } from '@firefly/ui'
+import { cn } from '@firefly/ui/lib/utils'
 import type { ComponentProps } from 'react'
 
 import type { WebSearchProviderDefinition } from '@/lib/web-search'

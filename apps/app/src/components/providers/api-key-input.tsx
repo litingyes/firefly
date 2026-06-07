@@ -1,4 +1,5 @@
-import { Button, Input } from '@firefly/ui'
+import { Button } from '@firefly/ui/components/ui/button'
+import { Input } from '@firefly/ui/components/ui/input'
 import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import { useState } from 'react'
 

@@ -1,5 +1,5 @@
 import { useChat } from '@ai-sdk/react'
-import { createFireflyChatTransport } from '@firefly/ai'
+import { createFireflyChatTransport } from '@firefly/ai/create-firefly-chat-transport'
 import { useEffect, useMemo, useRef } from 'react'
 import { toast } from 'sonner'
 

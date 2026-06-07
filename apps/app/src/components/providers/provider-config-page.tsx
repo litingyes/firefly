@@ -1,14 +1,14 @@
+import { Badge } from '@firefly/ui/components/ui/badge'
 import {
-  Badge,
   Empty,
   EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-  Input,
-  Skeleton,
-  Spinner,
-} from '@firefly/ui'
+} from '@firefly/ui/components/ui/empty'
+import { Input } from '@firefly/ui/components/ui/input'
+import { Skeleton } from '@firefly/ui/components/ui/skeleton'
+import { Spinner } from '@firefly/ui/components/ui/spinner'
 import { PlugZapIcon, SearchIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'

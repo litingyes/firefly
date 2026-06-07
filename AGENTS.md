@@ -21,14 +21,52 @@ This is a **pnpm workspace** (`pnpm-workspace.yaml`). Use `pnpm` from the repo r
 
 ## Current Packages & Apps
 
+### Package exports (`packages/*`)
+
+All workspace packages use **subpath exports** — no barrel `index.ts`. Import paths mirror source files under `src/` (patterns include file extensions so TypeScript and Node resolve correctly):
+
+```json
+// @firefly/ai, @firefly/web-search — flat src/*.ts
+"exports": { "./*": "./src/*.ts" }
+
+// @firefly/ui — nested components + index.css
+"exports": {
+  "./components/ui/*": "./src/components/ui/*.tsx",
+  "./components/ai-elements/*": "./src/components/ai-elements/*.tsx",
+  "./lib/*": "./src/lib/*.ts",
+  "./hooks/*": "./src/hooks/*.ts",
+  "./index.css": "./src/index.css"
+}
+```
+
+Examples:
+
+```ts
+import { Button } from '@firefly/ui/components/ui/button'
+import { cn } from '@firefly/ui/lib/utils'
+import type { ProviderId } from '@firefly/ai/types'
+import { createFireflyChatTransport } from '@firefly/ai/create-firefly-chat-transport'
+import type { WebSearchOutput } from '@firefly/web-search/types'
+```
+
+Adding a new public API = add a source file; no re-export list to maintain.
+
 ### `packages/ui` (`@firefly/ui`)
 
 Shared UI component library.
 
 - General UI primitives under `src/components/ui/`
 - AI-specific elements under `src/components/ai-elements/`
-- Exports: `@firefly/ui` and `@firefly/ui/index.css`
-- After adding components, run `pnpm generate:exports` in the package
+- Also exports `@firefly/ui/index.css` for global styles
+- Package-internal shadcn aliases use `imports` (`#components/*`, `#lib/*`)
+
+### `packages/ai` (`@firefly/ai`)
+
+AI provider runtime, model listing, and chat transport. Key entry points: `types`, `model-types`, `defaults`, `create-firefly-chat-transport`, `connection-test`, `list-models`.
+
+### `packages/web-search` (`@firefly/web-search`)
+
+Web search providers (Brave, Exa, Tavily). Key entry points: `types`, `defaults`, `search`, `connection-test`.
 
 ### `apps/app` (`@firefly/app`)
 

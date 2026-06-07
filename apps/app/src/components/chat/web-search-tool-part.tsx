@@ -1,5 +1,8 @@
-import { Badge, CollapsibleTrigger, Spinner, Tool, ToolContent } from '@firefly/ui'
-import type { WebSearchOutput } from '@firefly/web-search'
+import { Tool, ToolContent } from '@firefly/ui/components/ai-elements/tool'
+import { Badge } from '@firefly/ui/components/ui/badge'
+import { CollapsibleTrigger } from '@firefly/ui/components/ui/collapsible'
+import { Spinner } from '@firefly/ui/components/ui/spinner'
+import type { WebSearchOutput } from '@firefly/web-search/types'
 import type { ToolUIPart } from 'ai'
 import { ChevronDownIcon, SearchIcon } from 'lucide-react'
 

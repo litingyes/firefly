@@ -1,4 +1,4 @@
-import type { ModelRef } from '@firefly/ai'
+import type { ModelRef } from '@firefly/ai/model-types'
 
 export type ModelSceneId = 'chat' | 'intent' | 'context-compression'
 
