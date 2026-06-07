@@ -19,10 +19,19 @@ export function createFireflyChatTransport(
   return {
     sendMessages: async ({ messages, abortSignal }) => {
       const ref = options.getModelRef()
-      const config = ref ? options.getProviderConfig(ref.providerId) : undefined
+      if (!ref) {
+        throw new Error('No chat model configured. Assign one in Settings → Scenes.')
+      }
 
-      if (!ref || !config?.enabled) {
-        throw new Error('No chat model configured.')
+      const config = options.getProviderConfig(ref.providerId)
+      if (!config?.enabled) {
+        throw new Error(`${ref.providerId} is disabled. Enable it in Settings → Providers.`)
+      }
+
+      if (config.status !== 'connected') {
+        throw new Error(
+          `${ref.providerId} is not connected. Test the connection in Settings → Providers.`,
+        )
       }
 
       const result = streamText({

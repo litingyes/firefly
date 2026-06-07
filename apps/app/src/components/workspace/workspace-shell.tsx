@@ -20,13 +20,8 @@ export function WorkspaceShell({
   const isReady = connectedProviders > 0 && enabledModels > 0
 
   return (
-    <div className="relative flex h-full min-h-0 flex-col bg-background">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,var(--firefly-glow-subtle),transparent)]"
-      />
-
-      <header className="relative z-10 flex h-12 shrink-0 items-center justify-between border-b px-4">
+    <div className="flex h-full min-h-0 flex-col bg-background">
+      <header className="flex h-12 shrink-0 items-center justify-between border-b px-4">
         <div className="flex min-w-0 items-center gap-2">
           <div className="flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <SparklesIcon className="size-3.5" />
@@ -47,18 +42,19 @@ export function WorkspaceShell({
           </Badge>
           <ThemeToggle />
           <Button
-            aria-label="Open settings"
+            className="gap-1.5 px-2"
             onClick={onOpenSettings}
-            size="icon"
+            size="sm"
             type="button"
             variant="ghost"
           >
             <SettingsIcon className="size-4" />
+            <span className="hidden sm:inline">Settings</span>
           </Button>
         </div>
       </header>
 
-      <div className="relative min-h-0 flex-1">{children}</div>
+      <div className="min-h-0 flex-1">{children}</div>
     </div>
   )
 }

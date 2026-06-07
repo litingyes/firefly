@@ -1,6 +1,6 @@
 import { useChat } from '@ai-sdk/react'
 import { createFireflyChatTransport } from '@firefly/ai'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { toast } from 'sonner'
 
 import { useModelSettingsContext } from '@/hooks/model-settings-context'
@@ -13,15 +13,20 @@ export function useFireflyChat() {
   const { configMap } = useProviderConfigContext()
   const { scenes } = useModelSettingsContext()
 
+  const configMapRef = useRef(configMap)
+  const scenesRef = useRef(scenes)
+  configMapRef.current = configMap
+  scenesRef.current = scenes
+
   const transport = useMemo(
     () =>
       createFireflyChatTransport({
-        getModelRef: () => scenes.chat[0],
-        getProviderConfig: (id) => configMap[id],
+        getModelRef: () => scenesRef.current.chat[0],
+        getProviderConfig: (id) => configMapRef.current[id],
         fetch: getAppFetch(),
         system: FIREFLY_SYSTEM_PROMPT,
       }),
-    [configMap, scenes.chat],
+    [],
   )
 
   const chat = useChat({ transport })
