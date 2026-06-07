@@ -1,0 +1,10 @@
+{
+  "$schema": "https://agent-browser.dev/schema.json",
+  "headed": false,
+  "session": "firefly",
+  "sessionName": "firefly",
+  "downloadPath": ".agent-browser/downloads",
+  "screenshotDir": ".agent-browser/screenshots",
+  "screenshotQuality": 80,
+  "screenshotFormat": "png"
+}

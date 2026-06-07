@@ -61,25 +61,76 @@ cd apps/app && pnpm tauri dev
 
 Settings use the same keys in both modes (`provider-config`, `model-settings`). Legacy `localStorage` keys are migrated automatically on first load.
 
-`tauri-pilot` requires `pnpm tauri dev` (debug builds only).
+Choose browser dev or Tauri dev based on the startup principles below — not every task needs `pnpm tauri dev`.
 
-## Testing with tauri-pilot
+### UI testing requirement
+
+Every UI change (components, layout, interactions, visible copy or state) must be verified with **real user interaction** before marking work complete. Lint and build alone are not sufficient.
+
+- Cover the main path affected by the change (e.g. open page → click/fill → confirm visible result or state change).
+- After interactions, check for errors (`agent-browser` per its skill guidance; Tauri: `tauri-pilot logs --level error`).
+
+### `apps/app` startup principles
+
+| Scenario                | Start                           | Test CLI          | Notes                                         |
+| ----------------------- | ------------------------------- | ----------------- | --------------------------------------------- |
+| No system APIs involved | `cd apps/app && pnpm dev`       | **agent-browser** | Faster iteration, no Rust compile             |
+| System APIs involved    | `cd apps/app && pnpm tauri dev` | **tauri-pilot**   | Requires Tauri plugins or native capabilities |
+
+**Counts as system API** (use Tauri dev + tauri-pilot):
+
+- `tauri-plugin-http` (direct calls to vendor APIs blocked by CORS)
+- `tauri-plugin-store` file persistence (behavior beyond localStorage equivalence)
+- Rust commands, filesystem, window/system integration
+- Bugs or features reproducible only in the Tauri environment
+
+**Prefer web dev** (use `pnpm dev` + agent-browser):
+
+- Pure React UI, routing, styling, form validation
+- Settings read/write (browser dev uses `localStorage`; see table above)
+- Chat flows via Ollama, AI Gateway, or other APIs reachable with browser `fetch`
+
+## UI interaction testing
+
+### Browser dev — agent-browser
+
+Use the **agent-browser CLI** to drive and verify the running web dev server at `http://localhost:1520`.
+
+Load the CLI skill before running commands (keeps docs in sync with the installed version):
+
+```bash
+agent-browser skills get core
+```
+
+#### Workflow
+
+```text
+1. Start the app (pnpm dev) and open http://localhost:1520
+2. snapshot       — get interactive elements with @eN refs
+3. act on refs    — click, fill, type, select, check
+4. assert         — verify result
+5. check errors   — per agent-browser skill guidance
+```
+
+Full command reference: `agent-browser skills get core --full`
+
+### Tauri dev — tauri-pilot
 
 Use the **tauri-pilot CLI** to operate and verify the running Tauri app. The plugin is enabled only in debug builds (`tauri_plugin_pilot` in `apps/app/src-tauri/src/lib.rs`).
 
 Detailed command reference: `.agents/skills/tauri-pilot/SKILL.md`
 
-### Workflow
+#### Workflow
 
 ```text
-1. Start the app in dev mode (pnpm tauri dev)
+1. Start the app (pnpm tauri dev)
 2. ping          — verify connectivity
 3. snapshot -i   — get interactive elements with refs
 4. act on refs   — click, fill, type, select, check
 5. assert        — verify result (exit 0 = pass, exit 1 = fail)
 ```
 
-### Rules
+#### Rules
 
 1. **Always snapshot before interacting.** Refs reset on each snapshot.
 2. **Prefer `snapshot -i`** to minimize output.
@@ -87,7 +138,7 @@ Detailed command reference: `.agents/skills/tauri-pilot/SKILL.md`
 4. **One action at a time**, then re-snapshot to verify.
 5. **Check `logs --level error`** after actions to catch JS errors.
 
-### Quick Examples
+#### Quick Examples
 
 ```bash
 tauri-pilot ping
@@ -103,4 +154,4 @@ For structured CI tests, use declarative scenarios: `tauri-pilot run scenario.to
 
 - Put reusable code in `packages/*`; ship product logic in `apps/*`
 - Prefer extending `@firefly/ui` over duplicating UI in apps
-- Verify Tauri UI behavior with tauri-pilot before marking work complete
+- UI changes must pass real interaction testing per the startup principles (`agent-browser` or `tauri-pilot`) before marking work complete
