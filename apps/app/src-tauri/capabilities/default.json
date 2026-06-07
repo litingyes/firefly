@@ -3,5 +3,28 @@
   "identifier": "default",
   "description": "Capability for the main window",
   "windows": ["main"],
-  "permissions": ["core:default", "opener:default", "pilot:default"]
+  "permissions": [
+    "core:default",
+    "opener:default",
+    "pilot:default",
+    "store:allow-get",
+    "store:allow-set",
+    "store:allow-save",
+    "store:allow-load",
+    {
+      "identifier": "http:default",
+      "allow": [
+        { "url": "https://api.openai.com/**" },
+        { "url": "https://api.anthropic.com/**" },
+        { "url": "https://generativelanguage.googleapis.com/**" },
+        { "url": "https://api.deepseek.com/**" },
+        { "url": "https://openrouter.ai/**" },
+        { "url": "https://ai-gateway.vercel.sh/**" },
+        { "url": "http://localhost:**" },
+        { "url": "http://127.0.0.1:**" },
+        { "url": "https://localhost:**" },
+        { "url": "https://127.0.0.1:**" }
+      ]
+    }
+  ]
 }
