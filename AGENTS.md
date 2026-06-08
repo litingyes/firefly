@@ -113,12 +113,53 @@ Settings use the same keys in both modes (`provider-config`, `model-settings`). 
 
 Choose browser dev or Tauri dev based on the startup principles below — not every task needs `pnpm tauri dev`.
 
+### Static checks
+
+After editing any source file, run `vp check --fix` on **each changed file**:
+
+```bash
+vp check --fix <file-path>
+```
+
+`vp check` (configured in `vite.config.ts` with `typeAware` and `typeCheck`) runs format (Oxfmt), lint (Oxlint), and TypeScript type checks in one pass. Use `--fix` to auto-fix format and lint issues.
+
+For multiple files, run per file or pass several paths at once:
+
+```bash
+vp check --fix path/a.ts path/b.tsx
+```
+
+Pre-commit runs `vp staged` on staged files only. During development, check changed files proactively — do not wait until commit.
+
+**Done when:** every changed file passes `vp check --fix` with no remaining errors. Keep any fixes `--fix` applies.
+
 ### UI testing requirement
 
-Every UI change (components, layout, interactions, visible copy or state) must be verified with **real user interaction** before marking work complete. Lint and build alone are not sufficient.
+Every UI change (components, layout, interactions, visible copy or state) must be verified with **real user interaction** before marking work complete. Lint, build, and `vp check` alone are not sufficient.
 
-- Cover the main path affected by the change (e.g. open page → click/fill → confirm visible result or state change).
-- After interactions, check for errors (`agent-browser` per its skill guidance; Tauri: `tauri-pilot logs --level error`).
+Follow this test-case-first workflow:
+
+| Step                | Requirement                                                                                         |
+| ------------------- | --------------------------------------------------------------------------------------------------- |
+| 1. Analyze changes  | List what changed: components, state, interactions, copy                                            |
+| 2. Write test cases | **1–3** complete cases; each with name, preconditions, steps, expected results                      |
+| 3. Execute          | Run cases with `agent-browser` or `tauri-pilot`; assert after each step                             |
+| 4. Check errors     | After interactions: `agent-browser` per its skill guidance; Tauri: `tauri-pilot logs --level error` |
+
+**Do not** treat these as sufficient verification:
+
+- Opening the page or taking a snapshot only to confirm it loads
+- Generic clicks that do not exercise the changed behavior
+- Assertions without explicit expected outcomes from your test cases
+
+Example test case:
+
+```text
+Test Case: Enable web search from chat composer
+- Precondition: App at chat workspace; at least one search provider configured
+- Steps: Open capability dialog → toggle Web Search on → close dialog → type "latest news" → submit
+- Expected: Web search badge/indicator visible; search runs before assistant reply; no console errors
+```
 
 ### `apps/app` startup principles
 
@@ -156,10 +197,11 @@ agent-browser skills get core
 
 ```text
 1. Start the app (pnpm dev) and open http://localhost:1520
-2. snapshot       — get interactive elements with @eN refs
-3. act on refs    — click, fill, type, select, check
-4. assert         — verify result
-5. check errors   — per agent-browser skill guidance
+2. Write 1–3 test cases from the change (see UI testing requirement)
+3. snapshot       — get interactive elements with @eN refs
+4. Execute each test case step-by-step — click, fill, type, select, check
+5. assert         — verify each expected result per test case
+6. check errors   — per agent-browser skill guidance
 ```
 
 Full command reference: `agent-browser skills get core --full`
@@ -174,19 +216,22 @@ Detailed command reference: `.agents/skills/tauri-pilot/SKILL.md`
 
 ```text
 1. Start the app (pnpm tauri dev)
-2. ping          — verify connectivity
-3. snapshot -i   — get interactive elements with refs
-4. act on refs   — click, fill, type, select, check
-5. assert        — verify result (exit 0 = pass, exit 1 = fail)
+2. Write 1–3 test cases from the change (see UI testing requirement)
+3. ping          — verify connectivity
+4. snapshot -i   — get interactive elements with refs
+5. Execute each test case step-by-step — click, fill, type, select, check
+6. assert        — verify each expected result per test case (exit 0 = pass, exit 1 = fail)
+7. check errors  — tauri-pilot logs --level error
 ```
 
 #### Rules
 
-1. **Always snapshot before interacting.** Refs reset on each snapshot.
-2. **Prefer `snapshot -i`** to minimize output.
-3. **Use `wait` after async actions** (navigation, data loading).
-4. **One action at a time**, then re-snapshot to verify.
-5. **Check `logs --level error`** after actions to catch JS errors.
+1. **Test cases before interaction.** Write cases before operating the UI; do not skip.
+2. **Always snapshot before interacting.** Refs reset on each snapshot.
+3. **Prefer `snapshot -i`** to minimize output.
+4. **Use `wait` after async actions** (navigation, data loading).
+5. **One action at a time**, then re-snapshot to verify.
+6. **Check `logs --level error`** after actions to catch JS errors.
 
 #### Quick Examples
 
@@ -202,6 +247,7 @@ For structured CI tests, use declarative scenarios: `tauri-pilot run scenario.to
 
 ## Conventions
 
+- After editing a file, run `vp check --fix <file-path>` and ensure it passes
 - Put reusable code in `packages/*`; ship product logic in `apps/*`
 - Prefer extending `@firefly/ui` over duplicating UI in apps
-- UI changes must pass real interaction testing per the startup principles (`agent-browser` or `tauri-pilot`) before marking work complete
+- UI/interaction changes: write 1–3 test cases first, then verify with `agent-browser` or `tauri-pilot` per the startup principles before marking work complete
