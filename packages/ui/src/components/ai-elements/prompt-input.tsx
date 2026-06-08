@@ -1097,7 +1097,7 @@ export const PromptInputActionMenuContent = ({
   className,
   ...props
 }: PromptInputActionMenuContentProps) => (
-  <DropdownMenuContent align="start" className={cn(className)} {...props} />
+  <DropdownMenuContent align="start" className={cn('w-auto min-w-44', className)} {...props} />
 )
 
 export type PromptInputActionMenuItemProps = ComponentProps<typeof DropdownMenuItem>
@@ -1128,7 +1128,9 @@ export const PromptInputSubmit = ({
 
   let Icon = <CornerDownLeftIcon className="size-4" />
 
-  if (status === 'submitted') {
+  if (isGenerating && onStop) {
+    Icon = <SquareIcon className="size-4" />
+  } else if (status === 'submitted') {
     Icon = <Spinner />
   } else if (status === 'streaming') {
     Icon = <SquareIcon className="size-4" />

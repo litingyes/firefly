@@ -1,19 +1,23 @@
+import type { ModelRef } from '@firefly/ai/model-types'
+import { modelRefKey } from '@firefly/ai/model-types'
 import { Conversation, ConversationContent } from '@firefly/ui/components/ai-elements/conversation'
 import { Message, MessageContent } from '@firefly/ui/components/ai-elements/message'
+import {
+  PromptInputProvider,
+  usePromptInputController,
+} from '@firefly/ui/components/ai-elements/prompt-input'
 import { Suggestion, Suggestions } from '@firefly/ui/components/ai-elements/suggestion'
-import { Badge } from '@firefly/ui/components/ui/badge'
 import { Button } from '@firefly/ui/components/ui/button'
-import { GlobeIcon, PlugZapIcon } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { PlugZapIcon } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { ChatMessageParts } from '@/components/chat/chat-message-parts'
-import { CompletionInput } from '@/components/workspace/completion-input'
+import { ChatCapabilityDialog } from '@/components/workspace/chat-capability-dialog'
+import { ChatComposer, type ChatComposerSubmitPayload } from '@/components/workspace/chat-composer'
 import { useModelSettingsContext } from '@/hooks/model-settings-context'
 import { useProviderConfigContext } from '@/hooks/provider-config-context'
 import { useFireflyChat } from '@/hooks/use-firefly-chat'
-import { useWebSearchConfigContext } from '@/hooks/web-search-config-context'
 import { CHAT_STARTER_SUGGESTIONS, listChatCompletionSuggestions } from '@/lib/chat-completions'
-import { getWebSearchProviderDefinition } from '@/lib/web-search'
 
 interface ChatWorkspaceProps {
   onOpenSettings: () => void
@@ -68,33 +72,42 @@ function ChatAlerts({
   )
 }
 
-export function ChatWorkspace({ onOpenSettings }: ChatWorkspaceProps) {
+function ChatWorkspaceContent({ onOpenSettings }: ChatWorkspaceProps) {
   const { connectedCount, isLoading: isProviderLoading } = useProviderConfigContext()
-  const {
-    enabledModelRefs,
-    getModelLabel,
-    isLoading: isModelLoading,
-    scenes,
-    chatWebSearch,
-  } = useModelSettingsContext()
-  const { configMap: webSearchConfigMap } = useWebSearchConfigContext()
-  const { messages, sendMessage, status, stop, error, regenerate, clearError } = useFireflyChat()
-  const [input, setInput] = useState('')
+  const { enabledModelRefs, isLoading: isModelLoading, scenes } = useModelSettingsContext()
+  const activeModelRef = useRef<ModelRef | undefined>(undefined)
+  const { messages, sendMessage, status, stop, error, regenerate, clearError } = useFireflyChat({
+    activeModelRef,
+  })
+  const { textInput } = usePromptInputController()
+  const [activeChatModel, setActiveChatModel] = useState<ModelRef | null>(null)
+  const [capabilityOpen, setCapabilityOpen] = useState(false)
 
   const chatModels = scenes.chat
   const hasProviders = connectedCount > 0
   const hasChatModel = chatModels.length > 0
   const isHydrated = !isProviderLoading && !isModelLoading
   const isReady = isHydrated && hasProviders && hasChatModel && enabledModelRefs.length > 0
-  const activeModelLabel = chatModels[0] ? getModelLabel(chatModels[0]) : null
-  const activeWebSearchProvider =
-    chatWebSearch.enabled &&
-    chatWebSearch.providerId &&
-    webSearchConfigMap[chatWebSearch.providerId]?.status === 'connected'
-      ? getWebSearchProviderDefinition(chatWebSearch.providerId)
-      : null
   const isBusy = status === 'submitted' || status === 'streaming'
   const hasMessages = messages.length > 0
+  const input = textInput.value
+
+  useEffect(() => {
+    if (chatModels.length === 0) {
+      activeModelRef.current = undefined
+      setActiveChatModel(null)
+      return
+    }
+
+    const current = activeModelRef.current
+    if (current && chatModels.some((entry) => modelRefKey(entry) === modelRefKey(current))) {
+      return
+    }
+
+    const next = chatModels[0]
+    activeModelRef.current = next
+    setActiveChatModel(next)
+  }, [chatModels])
 
   const suggestions = useMemo(() => {
     if (!hasMessages && !input.trim()) {
@@ -106,19 +119,32 @@ export function ChatWorkspace({ onOpenSettings }: ChatWorkspaceProps) {
     return []
   }, [hasMessages, input])
 
-  const handleSubmit = (text: string) => {
-    void sendMessage({ text })
-    setInput('')
+  const handleSubmit = ({ files, text }: ChatComposerSubmitPayload) => {
+    const trimmed = text.trim()
+    if (isBusy || (!trimmed && files.length === 0)) {
+      return
+    }
+
+    void sendMessage({
+      text: trimmed,
+      ...(files.length > 0 ? { files } : {}),
+    })
   }
 
   const handleSuggestionClick = (value: string) => {
     if (!hasMessages && isReady) {
-      handleSubmit(value)
+      void sendMessage({ text: value })
+      textInput.clear()
       return
     }
 
-    setInput(value)
+    textInput.setInput(value)
     document.querySelector<HTMLTextAreaElement>('[data-testid="chat-input"]')?.focus()
+  }
+
+  const handleModelChange = (ref: ModelRef) => {
+    activeModelRef.current = ref
+    setActiveChatModel(ref)
   }
 
   useEffect(() => {
@@ -132,25 +158,6 @@ export function ChatWorkspace({ onOpenSettings }: ChatWorkspaceProps) {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
-
-  if (!hasProviders) {
-    return (
-      <div className="flex h-full items-center justify-center p-6">
-        <div className="max-w-md space-y-3 text-center">
-          <div className="mx-auto flex size-10 items-center justify-center rounded-md bg-muted text-muted-foreground">
-            <PlugZapIcon className="size-5" />
-          </div>
-          <div className="space-y-1">
-            <h2 className="font-medium text-base">Connect a provider to start</h2>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Firefly stores credentials on your machine. Use Settings in the toolbar to add your
-              first provider.
-            </p>
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   const composer = (
     <div className="space-y-3">
@@ -177,17 +184,22 @@ export function ChatWorkspace({ onOpenSettings }: ChatWorkspaceProps) {
         </div>
       ) : null}
 
-      <CompletionInput
+      <ChatComposer
+        activeModelRef={activeChatModel}
         busy={isBusy}
+        chatModels={chatModels}
         disabled={!isReady}
+        onModelChange={handleModelChange}
+        onOpenCapabilities={() => setCapabilityOpen(true)}
         onStop={() => stop()}
         onSubmit={handleSubmit}
-        onValueChange={setInput}
         placeholder={
           isReady ? 'Ask anything…' : isHydrated ? 'Assign a chat model in settings…' : 'Loading…'
         }
-        value={input}
+        status={status}
       />
+
+      <ChatCapabilityDialog onOpenChange={setCapabilityOpen} open={capabilityOpen} />
 
       {hasMessages && suggestions.length > 0 ? (
         <Suggestions>
@@ -215,24 +227,7 @@ export function ChatWorkspace({ onOpenSettings }: ChatWorkspaceProps) {
         </Conversation>
 
         <div className="shrink-0 border-t px-4 py-4 sm:px-6">
-          <div className="mx-auto w-full max-w-3xl">
-            {activeModelLabel || activeWebSearchProvider ? (
-              <div className="mb-3 flex flex-wrap gap-2">
-                {activeModelLabel ? (
-                  <Badge className="font-normal" variant="secondary">
-                    Chat · {activeModelLabel}
-                  </Badge>
-                ) : null}
-                {activeWebSearchProvider ? (
-                  <Badge className="gap-1 font-normal" variant="outline">
-                    <GlobeIcon className="size-3" />
-                    Web search · {activeWebSearchProvider.name}
-                  </Badge>
-                ) : null}
-              </div>
-            ) : null}
-            {composer}
-          </div>
+          <div className="mx-auto w-full max-w-3xl">{composer}</div>
         </div>
       </div>
     )
@@ -243,22 +238,39 @@ export function ChatWorkspace({ onOpenSettings }: ChatWorkspaceProps) {
       <div className="mx-auto w-full max-w-3xl space-y-6">
         <div className="space-y-2 text-center">
           <h2 className="font-medium text-base">Ask a question or pick a prompt</h2>
-          <div className="flex flex-wrap justify-center gap-2">
-            {activeModelLabel ? (
-              <Badge className="font-normal" variant="secondary">
-                Chat · {activeModelLabel}
-              </Badge>
-            ) : null}
-            {activeWebSearchProvider ? (
-              <Badge className="gap-1 font-normal" variant="outline">
-                <GlobeIcon className="size-3" />
-                Web search · {activeWebSearchProvider.name}
-              </Badge>
-            ) : null}
-          </div>
         </div>
         {composer}
       </div>
     </div>
+  )
+}
+
+export function ChatWorkspace({ onOpenSettings }: ChatWorkspaceProps) {
+  const { connectedCount } = useProviderConfigContext()
+  const hasProviders = connectedCount > 0
+
+  if (!hasProviders) {
+    return (
+      <div className="flex h-full items-center justify-center p-6">
+        <div className="max-w-md space-y-3 text-center">
+          <div className="mx-auto flex size-10 items-center justify-center rounded-md bg-muted text-muted-foreground">
+            <PlugZapIcon className="size-5" />
+          </div>
+          <div className="space-y-1">
+            <h2 className="font-medium text-base">Connect a provider to start</h2>
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              Firefly stores credentials on your machine. Use Settings in the toolbar to add your
+              first provider.
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <PromptInputProvider>
+      <ChatWorkspaceContent onOpenSettings={onOpenSettings} />
+    </PromptInputProvider>
   )
 }

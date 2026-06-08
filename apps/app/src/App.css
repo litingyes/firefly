@@ -12,7 +12,8 @@ body {
   margin: 0;
 }
 
-.firefly-completion-input[data-disabled] {
+.firefly-completion-input[data-disabled],
+form.firefly-completion-input[data-disabled] [data-slot='input-group'] {
   opacity: 0.72;
 }
 

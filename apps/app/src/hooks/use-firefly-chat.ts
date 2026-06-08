@@ -1,6 +1,7 @@
 import { useChat } from '@ai-sdk/react'
 import { createFireflyChatTransport } from '@firefly/ai/create-firefly-chat-transport'
-import { useEffect, useMemo, useRef } from 'react'
+import type { ModelRef } from '@firefly/ai/model-types'
+import { useEffect, useMemo, useRef, type RefObject } from 'react'
 import { toast } from 'sonner'
 
 import { useModelSettingsContext } from '@/hooks/model-settings-context'
@@ -10,7 +11,11 @@ import { getAppFetch } from '@/lib/tauri-fetch'
 
 const FIREFLY_SYSTEM_PROMPT = 'You are Firefly, a concise and capable assistant.'
 
-export function useFireflyChat() {
+interface UseFireflyChatOptions {
+  activeModelRef?: RefObject<ModelRef | undefined>
+}
+
+export function useFireflyChat(options: UseFireflyChatOptions = {}) {
   const { configMap } = useProviderConfigContext()
   const { chatWebSearch, scenes } = useModelSettingsContext()
   const { configMap: webSearchConfigMap } = useWebSearchConfigContext()
@@ -19,6 +24,8 @@ export function useFireflyChat() {
   const scenesRef = useRef(scenes)
   const chatWebSearchRef = useRef(chatWebSearch)
   const webSearchConfigMapRef = useRef(webSearchConfigMap)
+  const activeModelRefRef = useRef(options.activeModelRef)
+  activeModelRefRef.current = options.activeModelRef
   configMapRef.current = configMap
   scenesRef.current = scenes
   chatWebSearchRef.current = chatWebSearch
@@ -27,7 +34,7 @@ export function useFireflyChat() {
   const transport = useMemo(
     () =>
       createFireflyChatTransport({
-        getModelRef: () => scenesRef.current.chat[0],
+        getModelRef: () => activeModelRefRef.current?.current ?? scenesRef.current.chat[0],
         getProviderConfig: (id) => configMapRef.current[id],
         getWebSearch: () => {
           const setting = chatWebSearchRef.current
