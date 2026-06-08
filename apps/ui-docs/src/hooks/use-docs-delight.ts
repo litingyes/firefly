@@ -9,9 +9,9 @@ export function useDocsDelight() {
 
     console.info(
       '%cFirefly UI%c  Pure AI. Every scene, a glow.\n%cTip:%c  Press ⌘K to search components.',
-      'color: oklch(0.51 0.165 192); font-weight: 600',
+      'color: oklch(0.47 0.1 205); font-weight: 600',
       'color: inherit',
-      'color: oklch(0.51 0.165 192); font-weight: 600',
+      'color: oklch(0.47 0.1 205); font-weight: 600',
       'color: inherit',
     )
   }, [])

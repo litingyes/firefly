@@ -234,7 +234,8 @@ export type VoiceSelectorAccentProps = ComponentProps<'span'> & {
     | 'polish'
     | 'turkish'
     | 'greek'
-    | string
+    // oxlint-disable-next-line typescript-eslint(ban-types) -- intentional pattern for autocomplete-friendly string union
+    | (string & {})
 }
 
 export const VoiceSelectorAccent = ({

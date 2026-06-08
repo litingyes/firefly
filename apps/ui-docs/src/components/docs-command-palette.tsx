@@ -30,7 +30,7 @@ export function DocsCommandPalette({ open, onOpenChange }: DocsCommandPalettePro
 
   const selectEntry = (entry: ComponentDemoEntry) => {
     onOpenChange(false)
-    navigate(toPath(entry))
+    void navigate(toPath(entry))
   }
 
   return (
@@ -48,7 +48,7 @@ export function DocsCommandPalette({ open, onOpenChange }: DocsCommandPalettePro
           <CommandItem
             onSelect={() => {
               onOpenChange(false)
-              navigate('/')
+              void navigate('/')
             }}
           >
             Overview
@@ -56,7 +56,7 @@ export function DocsCommandPalette({ open, onOpenChange }: DocsCommandPalettePro
           <CommandItem
             onSelect={() => {
               onOpenChange(false)
-              navigate('/theme')
+              void navigate('/theme')
             }}
           >
             Theme

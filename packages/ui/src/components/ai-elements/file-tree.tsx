@@ -144,6 +144,7 @@ export const FileTreeFolder = ({
             <CollapsibleTrigger
               render={
                 <button
+                  aria-label="Toggle folder"
                   className="flex shrink-0 cursor-pointer items-center border-none bg-transparent p-0"
                   type="button"
                 />
@@ -260,7 +261,8 @@ export const FileTreeActions = ({ className, children, ...props }: FileTreeActio
     className={cn('ml-auto flex items-center gap-1', className)}
     onClick={stopPropagation}
     onKeyDown={stopPropagation}
-    role="group"
+    role="toolbar"
+    tabIndex={-1}
     {...props}
   >
     {children}

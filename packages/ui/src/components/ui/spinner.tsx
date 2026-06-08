@@ -4,12 +4,9 @@ import { cn } from '#lib/utils'
 
 function Spinner({ className, ...props }: React.ComponentProps<'svg'>) {
   return (
-    <Loader2Icon
-      role="status"
-      aria-label="Loading"
-      className={cn('size-4 animate-spin', className)}
-      {...props}
-    />
+    <output aria-label="Loading" aria-live="polite" className={cn('inline-flex', className)}>
+      <Loader2Icon className="size-4 animate-spin" {...props} />
+    </output>
   )
 }
 

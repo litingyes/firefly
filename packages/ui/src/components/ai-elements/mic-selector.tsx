@@ -98,15 +98,15 @@ export const useAudioDevices = () => {
   }, [loading])
 
   useEffect(() => {
-    loadDevicesWithoutPermission()
+    void loadDevicesWithoutPermission()
   }, [loadDevicesWithoutPermission])
 
   useEffect(() => {
     const handleDeviceChange = () => {
       if (hasPermission) {
-        loadDevicesWithPermission()
+        void loadDevicesWithPermission()
       } else {
-        loadDevicesWithoutPermission()
+        void loadDevicesWithoutPermission()
       }
     }
 
@@ -158,7 +158,7 @@ export const MicSelector = ({
 
   useEffect(() => {
     if (open && !hasPermission && !loading) {
-      loadDevices()
+      void loadDevices()
     }
   }, [open, hasPermission, loading, loadDevices])
 

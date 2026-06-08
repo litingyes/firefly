@@ -276,7 +276,8 @@ export const StackTraceActions = memo(
       className={cn('flex shrink-0 items-center gap-1', className)}
       onClick={handleActionsClick}
       onKeyDown={handleActionsKeyDown}
-      role="group"
+      role="toolbar"
+      tabIndex={-1}
       {...props}
     >
       {children}

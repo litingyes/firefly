@@ -73,7 +73,7 @@ const getHandleCoordsByPosition = (node: InternalNode<Node>, handlePosition: Pos
       break
     }
     default: {
-      throw new Error(`Invalid handle position: ${handlePosition}`)
+      throw new Error(`Invalid handle position: ${String(handlePosition)}`)
     }
   }
 

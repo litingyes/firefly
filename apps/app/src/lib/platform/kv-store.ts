@@ -52,7 +52,7 @@ function writeBrowserStoreRecord(record: StoreRecord): void {
   window.localStorage.setItem(STORE_FILE, JSON.stringify(record))
 }
 
-function readLegacyProviderConfig(): unknown | null {
+function readLegacyProviderConfig(): unknown {
   if (typeof window === 'undefined') {
     return null
   }
@@ -73,7 +73,7 @@ function readLegacyProviderConfig(): unknown | null {
   return null
 }
 
-function readLegacyModelSettings(): unknown | null {
+function readLegacyModelSettings(): unknown {
   if (typeof window === 'undefined') {
     return null
   }
@@ -129,7 +129,7 @@ function migrateBrowserStoreRecord(): StoreRecord {
   return record
 }
 
-function readLocalStorageValue(key: string): unknown | null {
+function readLocalStorageValue(key: string): unknown {
   const record = migrateBrowserStoreRecord()
   const value = record[key]
   return value ?? null

@@ -2,16 +2,6 @@
 
 @source './';
 
-:root {
-  --firefly-glow: oklch(0.51 0.165 192);
-  --firefly-glow-subtle: oklch(0.51 0.165 192 / 0.14);
-}
-
-.dark {
-  --firefly-glow: oklch(0.76 0.16 192);
-  --firefly-glow-subtle: oklch(0.76 0.16 192 / 0.16);
-}
-
 html,
 body,
 #root {

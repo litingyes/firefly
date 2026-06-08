@@ -138,7 +138,8 @@ export const CommitActions = ({ className, children, ...props }: CommitActionsPr
     className={cn('flex items-center gap-1', className)}
     onClick={handleActionsClick}
     onKeyDown={handleActionsKeyDown}
-    role="group"
+    role="toolbar"
+    tabIndex={-1}
     {...props}
   >
     {children}
